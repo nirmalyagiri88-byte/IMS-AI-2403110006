@@ -1,0 +1,15 @@
+
+import math
+from cadquery import func as cf
+
+def clutch_brick(length, width, height, stud_d, stud_h, spacing):
+    body = cf.box(length, width, height)
+    stud = cf.cylinder(d=stud_d, h=stud_h)
+    left = stud.moved(x=-spacing / 2, z=height)
+    right = stud.moved(x=spacing / 2, z=height)
+    return body + left + right
+
+brick = clutch_brick(15.6, 7.8, 9.6, 4.8, 1.7, 8.0)
+expected = 15.6 * 7.8 * 9.6 + 2 * math.pi * (4.8 / 2) ** 2 * 1.7
+assert abs(brick.Volume() - expected) < 0.5
+brick.exportStl("brick.stl")
